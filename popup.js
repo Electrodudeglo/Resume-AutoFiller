@@ -73,10 +73,21 @@ function createExperienceEntry(experience, index) {
 
     // Add event listener for insert button
     const insertBtn = entryDiv.querySelector('.insert-button');
-    insertBtn.addEventListener('click', () => {
-        // TODO: Implement the insert functionality
-        console.log(`Insert button clicked for experience ${index}`);
+insertBtn.addEventListener('click', () => {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+            action: 'testingMsg',
+            data: 'working'
+        }, function(response) {
+            if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message);
+            } else {
+                console.log('Response from content script:', response);
+            }
+        });
     });
+    console.log(`Insert button clicked for experience ${index}`);
+});
 
-    return entryDiv;
+return entryDiv;
 }
