@@ -34,6 +34,14 @@ function createExperienceEntry(experience, index) {
         </div>
         <div class="experience-content">
             <div class="info-item">
+                <div class="info-label">Company Name:</div>
+                <div class="info-value">${experience.company_name}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Job Title:</div>
+                <div class="info-value">${experience.job_title}</div>
+            </div>
+            <div class="info-item">
                 <div class="info-label">Location:</div>
                 <div class="info-value">${experience.location}</div>
             </div>
