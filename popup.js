@@ -71,39 +71,47 @@ function createExperienceEntry(experience, index) {
         dropdownArrow.textContent = content.style.display === 'block' ? '▲' : '▼';
     });
 
-
-    // Json Data for the event listner. I really don't understand Javascript man
-    function eventListnerData() {
-
-        fetch('mycv.json')
-        .then(response => response.json())
-        .then(data => {
-            
-            console.log(data)
-            if (Array.isArray(data)) {
-                return data;  // Return the data here
-            } else {
-                throw new Error('Data is not an array');
-            }
-        });
+    function loadJsonData() {
+        return fetch('mycv.json')
+            .then(response => response.json())
+            .catch(error => {
+                console.error('Error loading JSON:', error);
+                return null;
+            });
     }
-
+    
     // Add event listener for insert button
-    const insertBtn = entryDiv.querySelector('.insert-button');
-insertBtn.addEventListener('click', () => {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-            action: 'indexedCvs',
-            data: eventListnerData()
-        }, 
-
-        function(response) {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError.message);
-            } else {
-                console.log('Response from content script:', response);
-            }
+// Add this function at the top level of your script
+function loadJsonData() {
+    return fetch('mycv.json')
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error loading JSON:', error);
+            return null;
         });
+}
+
+// Modify the insert button event listener in createExperienceEntry function
+const insertBtn = entryDiv.querySelector('.insert-button');
+insertBtn.addEventListener('click', () => {
+    loadJsonData().then(jsonData => {
+        if (jsonData) {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'indexedCvs',
+                    data: jsonData
+                }, 
+                function(response) {
+                    if (chrome.runtime.lastError) {
+                        console.error(chrome.runtime.lastError.message);
+                    } else {
+                        console.log('Response from content script:', response);
+                    }
+                });
+            });
+        } else {
+            console.error('Failed to load JSON data');
+        }
     });
     console.log(`Insert button clicked for experience ${index}`);
 });
