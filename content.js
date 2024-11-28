@@ -6,9 +6,10 @@ const fieldMappings = {
     experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
 };
 
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'indexedCvs') {
-        findInputField(request.data)
+        filloutFields(request.data)
             .then(result => {
                 sendResponse({ success: true, message: result });
             })
@@ -19,26 +20,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-function findInputField(inputData) {
-    return new Promise((resolve, reject) => {
-        try {
-            const inputFields = document.querySelector(fieldMappings);
-            if (inputFields) {
-                companyName.value = inputData; // Assuming inputData is an object with company_name property
-                resolve("Company name filled successfully");
-            } else {
-                reject("Company name input field not found");
-            }
-            
-            // Add more field assignments here as needed
-            // For example:
-            // const jobTitle = document.querySelector('input[id="job_title_1"], input[name="job_title_1"]');
-            // if (jobTitle) {
-            //     jobTitle.value = inputData.job_title;
-            // }
-            
-        } catch (error) {
-            reject(`Error filling fields: ${error.toString()}`);
-        }
-    });
+function parseRequestData() {
+
+// keep track of indexed json data. If index 0 is selected, if fills out the indexed input fields.
+
+// then the json data 0 is no longer available to be used, unless the input fields are cleared.
+
+// the 'insert' button defined in 'popup.js' is disable for that particular json data.
+
+}
+
+
+function indexInputFields() {
+
+    // find all input fields and index them.
+
+    // if user presses 'insert' then it fills out index 0 of the input fields.
+
+    // any subsequent 'insert' buttons pressed, the script fills out the empty input fields.
+
+}
+
+
+function filloutFields() {
+
+    // pass this function to the event listener.
+
 }
