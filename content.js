@@ -1,3 +1,11 @@
+const fieldMappings = {
+    companyName: ['company', 'employer', 'organization', 'business'],
+    jobTitle: ['job', 'position', 'title', 'role','post'],
+    from: ['start date', 'from', 'beginning', 'start'],
+    to: ['end date', 'to', 'until', 'end'],
+    experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
+};
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'indexedCvs') {
         findInputField(request.data)
@@ -14,9 +22,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function findInputField(inputData) {
     return new Promise((resolve, reject) => {
         try {
-            const companyName = document.querySelector('input[id="company_name"], input[name="company_name"]');
-            if (companyName) {
-                companyName.value = inputData.company_name; // Assuming inputData is an object with company_name property
+            const inputFields = document.querySelector(fieldMappings);
+            if (inputFields) {
+                companyName.value = inputData; // Assuming inputData is an object with company_name property
                 resolve("Company name filled successfully");
             } else {
                 reject("Company name input field not found");
