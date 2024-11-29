@@ -80,42 +80,23 @@ function createExperienceEntry(experience, index) {
             });
     }
     
-    // Add event listener for insert button
-// Add this function at the top level of your script
-function loadJsonData() {
-    return fetch('mycv.json')
-        .then(response => response.json())
-        .catch(error => {
-            console.error('Error loading JSON:', error);
-            return null;
-        });
-}
-
 // Modify the insert button event listener in createExperienceEntry function
 const insertBtn = entryDiv.querySelector('.insert-button');
+
 insertBtn.addEventListener('click', () => {
-    loadJsonData().then(jsonData => {
-        if (jsonData) {
-            console.log('JSON data loaded:', jsonData);
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'indexedCvs',
-                    data: jsonData
-                }, 
-                function(response) {
-                    if (chrome.runtime.lastError) {
-                        console.error(chrome.runtime.lastError.message);
-                    } else {
-                        console.log('Response from content script:', response);
-                    }
-                });
-            });
-        } else {
-            console.error('Failed to load JSON data');
-        }
-    });
-    console.log(`Insert button clicked for experience ${index}`);
-});
+
+chrome.tabs.query({active:true, currentWindow:true} ,function(tabs) {
+
+    chrome.tabs.sendMessage(tabs[0].id,{
+
+        action:'indexedCvs',
+        data: console.log('hello')
+    })
+})    
+
+
+}
+)
 
 return entryDiv;
 }

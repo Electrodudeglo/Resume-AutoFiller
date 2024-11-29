@@ -6,3 +6,22 @@ const fieldMappings = {
     experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
 };
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+
+    if(request.action === 'indexedCvs') {
+
+        console.log('hello');
+
+    }
+
+});
+
+
+function findAllInputFields() {
+
+    const inputFields = document.querySelectorAll('label, input[name="company_name"]');
+
+    console.log(inputFields);
+
+}
+
