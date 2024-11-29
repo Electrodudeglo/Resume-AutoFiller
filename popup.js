@@ -70,15 +70,6 @@ function createExperienceEntry(experience, index) {
         content.style.display = content.style.display === 'block' ? 'none' : 'block';
         dropdownArrow.textContent = content.style.display === 'block' ? '▲' : '▼';
     });
-
-    function loadJsonData() {
-        return fetch('mycv.json')
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error loading JSON:', error);
-                return null;
-            });
-    }
     
 // Modify the insert button event listener in createExperienceEntry function
 const insertBtn = entryDiv.querySelector('.insert-button');
@@ -90,7 +81,7 @@ chrome.tabs.query({active:true, currentWindow:true} ,function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id,{
 
         action:'indexedCvs',
-        data: console.log('hello')
+        data: 'hello'
     })
 })    
 

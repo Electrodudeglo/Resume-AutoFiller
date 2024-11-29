@@ -8,16 +8,17 @@ const fieldMappings = {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
-    if(request.action === 'indexedCvs') {
+    if(sender.action === 'indexedCvs') {
 
-        console.log('hello');
+        const inputFields = request.data
 
+        findAllInputFields(inputFields)
     }
 
 });
 
 
-function findAllInputFields() {
+function findAllInputFields(inputFields) {
 
     const inputFields = document.querySelectorAll('label, input[name="company_name"]');
 
