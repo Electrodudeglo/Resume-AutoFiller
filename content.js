@@ -10,9 +10,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     if(sender.action === 'indexedCvs') {
 
-        const inputFields = request.data
-
-        findAllInputFields(inputFields)
+        request.data
     }
 
 });
