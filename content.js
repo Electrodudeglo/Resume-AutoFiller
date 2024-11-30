@@ -7,20 +7,24 @@ const fieldMappings = {
 };
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-
-    if(sender.action === 'indexedCvs') {
-
-        request.data
+    if (request.action === 'indexedCvs') {
+        const experience = request.data;
+        
+        // Find the company name input field
+        const companyInput = document.querySelector('input[name="company_name"], input[placeholder*="company"], input[id*="company"]');
+        
+        // If found, fill it with the company name
+        if (companyInput) {
+            companyInput.value = experience.company_name;
+            
+            // Trigger input event to notify any listeners
+            const inputEvent = new Event('input', { bubbles: true });
+            companyInput.dispatchEvent(inputEvent);
+            
+            console.log('Company name filled:', experience.company_name);
+        } else {
+            console.log('Company name input field not found');
+        }
     }
-
 });
-
-
-function findAllInputFields(inputFields) {
-
-    const inputFields = document.querySelectorAll('label, input[name="company_name"]');
-
-    console.log(inputFields);
-
-}
 
