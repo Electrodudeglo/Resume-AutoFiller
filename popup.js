@@ -82,9 +82,18 @@ chrome.tabs.query({active:true, currentWindow:true} ,function(tabs) {
 
         action:'indexedCvs',
         data: experience,
-        index: console.log(index)
-    })
+        index: console.log(index),
+    },
+
+    function(response){
+
+        console.log("response:", response)
+
+    }
+    
+)    
 })    
+
 
 
 }

@@ -6,25 +6,39 @@ const fieldMappings = {
     experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
 };
 
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'indexedCvs') {
-        const experience = request.data;
         
-        // Find the company name input field
-        const companyInput = document.querySelector('input[name="company_name"], input[placeholder*="company"], input[id*="company"]');
+        const experiences = request.data;
+
+        sendResponse(findAllFields())
         
-        // If found, fill it with the company name
-        if (companyInput) {
-            companyInput.value = experience.company_name;
-            
-            // Trigger input event to notify any listeners
-            const inputEvent = new Event('input', { bubbles: true });
-            companyInput.dispatchEvent(inputEvent);
-            
-            console.log('Company name filled:', experience.company_name);
-        } else {
-            console.log('Company name input field not found');
-        }
     }
 });
+
+
+function findAllFields() {
+    const matchedFields = {};
+
+    for (const [key, synonyms] of Object.entries(fieldMappings)) {
+        const selector = synonyms.map(synonym => 
+            `input[name*="${synonym}" i], input[id*="${synonym}" i], input[placeholder*="${synonym}" i], textarea[name*="${synonym}" i], textarea[id*="${synonym}" i], textarea[placeholder*="${synonym}" i]`
+        ).join(', ');
+
+        const fields = document.querySelectorAll(selector);
+        
+        if (fields.length > 0) {
+            matchedFields[key] = Array.from(fields).map(field => ({
+                element: field,
+                name: field.name || field.id || '',
+                type: field.type || 'textarea'
+            }));
+        }
+    }
+
+    return matchedFields;
+}
+
+
 
