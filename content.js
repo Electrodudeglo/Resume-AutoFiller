@@ -48,20 +48,37 @@ function fillField(input, value) {
     return false;
 }
 
-function findAllFields(experience) {
+function findAllFields(experience, experienceId) {
+    let fieldsInserted = false;
     
     Object.keys(fieldMappings).forEach(key => {
         if (experience && experience[key]) {
             const inputs = findAllInputs(key);
             for (let input of inputs) {
                 if (fillField(input, experience[key])) {
-                    // If we successfully filled a field, break the loop
-                    break;      
+                    fieldsInserted = true;
+                    break;
                 }
             }
         }
     });
+
+    // Send a message back to the popup
+    chrome.runtime.sendMessage({
+        action: 'insertionComplete',
+        fieldsInserted: fieldsInserted,
+        experienceId: experienceId
+    });
 }
+
+// Update the listener in content.js
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === 'indexedCvs') {
+        const experience = request.data;
+        const experienceId = request.experienceId;
+        findAllFields(experience, experienceId);
+    }
+});
 
 
 

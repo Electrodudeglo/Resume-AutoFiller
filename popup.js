@@ -73,21 +73,26 @@ function createExperienceEntry(experience, index) {
     
 // Modify the insert button event listener in createExperienceEntry function
 const insertBtn = entryDiv.querySelector('.insert-button');
+    insertBtn.addEventListener('click', () => {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'indexedCvs',
+                data: experience,
+                experienceId: index
+            });
+        });
+    });
 
-insertBtn.addEventListener('click', () => {
+    // Add a listener for the insertionComplete message
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === 'insertionComplete' && message.experienceId === index) {
+            if (message.fieldsInserted) {
+                insertBtn.textContent = 'Experience Data Filled';
+                insertBtn.style.backgroundColor = 'yellow';
+                insertBtn.style.color = 'black';
+            }
+        }
+    });
 
-chrome.tabs.query({active:true, currentWindow:true} ,function(tabs) {
-
-    chrome.tabs.sendMessage(tabs[0].id,{
-
-        action:'indexedCvs',
-        data: experience,
-        index: console.log(index),
-    },    
-)    
-})    
-
-}
-)
-return entryDiv;
+    return entryDiv;
 }
