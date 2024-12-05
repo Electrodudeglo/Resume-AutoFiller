@@ -73,21 +73,29 @@ function createExperienceEntry(experience, index) {
     
 // Modify the insert button event listener in createExperienceEntry function
 const insertBtn = entryDiv.querySelector('.insert-button');
+    insertBtn.addEventListener('click', () => {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'indexedCvs',
+                data: experience
+            });
+        });
+    });
 
-insertBtn.addEventListener('click', () => {
+    // Add a listener for the insertionComplete message
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        if (message.action === 'insertionComplete') {
+            if (message.fieldsInserted) {
+                insertBtn.disabled = true;
+                insertBtn.textContent = 'Inserted';
+            } else {
+                insertBtn.textContent = 'No fields inserted';
+                setTimeout(() => {
+                    insertBtn.textContent = 'Insert';
+                }, 2000);
+            }
+        }
+    });
 
-chrome.tabs.query({active:true, currentWindow:true} ,function(tabs) {
-
-    chrome.tabs.sendMessage(tabs[0].id,{
-
-        action:'indexedCvs',
-        data: experience,
-        index: console.log(index),
-    },    
-)    
-})    
-
-}
-)
-return entryDiv;
+    return entryDiv;
 }

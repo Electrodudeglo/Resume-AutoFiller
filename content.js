@@ -49,16 +49,23 @@ function fillField(input, value) {
 }
 
 function findAllFields(experience) {
+    let fieldsInserted = false;
     Object.keys(fieldMappings).forEach(key => {
         if (experience && experience[key]) {
             const inputs = findAllInputs(key);
             for (let input of inputs) {
                 if (fillField(input, experience[key])) {
-                    // If we successfully filled a field, break the loop
+                    fieldsInserted = true;
                     break;
                 }
             }
         }
+    });
+
+    // Send a message back to the popup
+    chrome.runtime.sendMessage({
+        action: 'insertionComplete',
+        fieldsInserted: fieldsInserted
     });
 }
 
