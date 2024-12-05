@@ -8,27 +8,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 
 function findAllFields(experience) {
-    
-    const companyRelatedFields = [
-        'company',
-        'employer',
-        'organization',
-        'firm',
-        'business',
-        'workplace',
-        'corporation',
-        'enterprise'
-    ];
+    const fieldMappings = {
+        company_name: ['company', 'employer', 'organization', 'business'],
+        job_title: ['job', 'position', 'title', 'role', 'post'],
+        from: ['start date', 'from', 'beginning', 'start'],
+        to: ['end date', 'to', 'until', 'end'],
+        experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
+    };
 
-    const inputFieldSelectors = companyRelatedFields.map(field => `input[name*="${field}" i]`);
-    const inputFields = document.querySelectorAll(inputFieldSelectors.join(', '));
+    Object.entries(fieldMappings).forEach(([key, relatedFields]) => {
+        const inputFieldSelectors = relatedFields.map(field => `input[name*="${field}" i], textarea[name*="${field}" i]`);
+        const inputFields = document.querySelectorAll(inputFieldSelectors.join(', '));
 
-    inputFields.forEach(input => {
-        if (experience) {
-            input.value = experience.company_name;
-        } else {
-            input.value = "hello"; // fallback value if no company data
-        }
+        inputFields.forEach(input => {
+            if (experience && experience[key]) {
+                input.value = experience[key];
+            } else {
+                input.value = ""; // Clear the field if no data available
+            }
+        });
     });
 }
 
