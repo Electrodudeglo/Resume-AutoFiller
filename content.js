@@ -2,6 +2,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'indexedCvs') {
         const experience = request.data;
         findAllFields(experience);
+
+        
     }
 });
 
@@ -69,16 +71,9 @@ function findAllFields(experience, experienceId) {
         fieldsInserted: fieldsInserted,
         experienceId: experienceId
     });
+
 }
 
-// Update the listener in content.js
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === 'indexedCvs') {
-        const experience = request.data;
-        const experienceId = request.experienceId;
-        findAllFields(experience, experienceId);
-    }
-});
 
 
 

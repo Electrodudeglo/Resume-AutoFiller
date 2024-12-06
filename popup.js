@@ -78,20 +78,9 @@ const insertBtn = entryDiv.querySelector('.insert-button');
             chrome.tabs.sendMessage(tabs[0].id, {
                 action: 'indexedCvs',
                 data: experience,
-                experienceId: index
+                index: console.log(experience.index)
             });
         });
-    });
-
-    // Add a listener for the insertionComplete message
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.action === 'insertionComplete' && message.experienceId === index) {
-            if (message.fieldsInserted) {
-                insertBtn.textContent = 'Experience Data Filled';
-                insertBtn.style.backgroundColor = 'yellow';
-                insertBtn.style.color = 'black';
-            }
-        }
     });
 
     return entryDiv;
