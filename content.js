@@ -1,9 +1,8 @@
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'indexedCvs') {
         const experience = request.data;
-        findAllFields(experience);
-
-        
+        const experienceId = request.experienceId;
+        findAllFields(experience, experienceId);
     }
 });
 
