@@ -97,5 +97,3 @@ const insertBtn = entryDiv.querySelector('.insert-button');
     return entryDiv;
 }
 
-insertBtn.classList.add('filled');
-insertBtn.textContent = 'Experience Data Filled';
