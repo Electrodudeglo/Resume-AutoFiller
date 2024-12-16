@@ -8,8 +8,8 @@ function loadCv() {
         .then(response => response.json())
         .then(data => {
             console.log(data);
-            if (Array.isArray(data)) {
-                displayExperiences(data);
+            if (data.experiences && Array.isArray(data.experiences)) {
+                displayExperiences(data.experiences);
             }
         })
         .catch(error => console.error('Error:', error));
