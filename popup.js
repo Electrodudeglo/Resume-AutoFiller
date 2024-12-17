@@ -1,4 +1,23 @@
-import {baseCv} from './mycv.js'
+import { baseCv } from './mycv.js';
+
+function createMetaInfoSection() {
+  const metaInfoDiv = document.createElement('div');
+  metaInfoDiv.className = 'meta-info';
+  metaInfoDiv.innerHTML = `
+      <h2 class="meta-info-header">Meta Information</h2>
+      <div class="info-item">
+          <div class="info-label">CV Type:</div>
+          <div class="info-value">${baseCv.meta_tag.cv_type}</div>
+      </div>
+      <div class="info-item">
+          <div class="info-label">AI Explanation:</div>
+          <div class="info-value">${baseCv.meta_tag.ai_explanation}</div>
+      </div>
+  `;
+  return metaInfoDiv;
+}
+
+console.log(baseCv.meta_tag.cv_type)
 
 function createExperienceEntry(experience, index) {
     const entryDiv = document.createElement('div');
@@ -38,34 +57,45 @@ function createExperienceEntry(experience, index) {
         </div>
     `;
     
-    // Add event listener for dropdown functionality
+    addEventListeners(entryDiv, experience);
+    return entryDiv;
+}
+
+function addEventListeners(entryDiv, experience) {
     const header = entryDiv.querySelector('.experience-header');
     const content = entryDiv.querySelector('.experience-content');
     const dropdownArrow = entryDiv.querySelector('.dropdown-arrow');
-    
+    const insertButton = entryDiv.querySelector('.insert-button');
+
     header.addEventListener('click', () => {
         content.style.display = content.style.display === 'block' ? 'none' : 'block';
         dropdownArrow.textContent = content.style.display === 'block' ? '▲' : '▼';
     });
 
-    // Add event listener for insert button
-    const insertButton = entryDiv.querySelector('.insert-button');
     insertButton.addEventListener('click', () => {
-        // Placeholder for insert functionality
         console.log('Insert button clicked for:', experience.company_name);
-        // We'll implement the actual insert functionality later
+        // Implement the actual insert functionality here
     });
-
-    return entryDiv;
 }
 
-function displayExperiences() {
-    const experiencesContainer = document.getElementById('experiences');
+function displayContent() {
+    const container = document.getElementById('container');
+    
+    // Create and append meta info section
+    const metaInfoSection = createMetaInfoSection();
+    container.appendChild(metaInfoSection);
+    
+    // Create and append experiences section
+    const experiencesSection = document.createElement('div');
+    experiencesSection.id = 'experiences';
+    container.appendChild(experiencesSection);
+    
+    // Populate experiences
     baseCv.cv_entries.forEach((experience, index) => {
         const entryElement = createExperienceEntry(experience, index);
-        experiencesContainer.appendChild(entryElement);
+        experiencesSection.appendChild(entryElement);
     });
 }
 
-// Call the function to display experiences when the popup is loaded
-document.addEventListener('DOMContentLoaded', displayExperiences);
+// Call the function to display content when the popup is loaded
+document.addEventListener('DOMContentLoaded', displayContent);

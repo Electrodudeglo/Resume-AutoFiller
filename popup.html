@@ -17,6 +17,13 @@
             color: #333;
             margin-bottom: 15px;
         }
+        .meta-info {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
         .experience-entry {
             background-color: #fff;
             border: 1px solid #ddd;
@@ -80,21 +87,28 @@
             text-align: center;
             margin-top: 10px;
         }
-        
         .insert-button.filled {
-        background-color: yellow;
-        color: black;
-    }
+            background-color: yellow;
+            color: black;
+        }
+        .insert-button.filled:hover {
+            background-color: #ffff66;
+        }
 
-       .insert-button.filled:hover {
-        background-color: #ffff66;
-    }
-    
+    .meta-info-header {
+    font-size: 16px;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
     </style>
 </head>
 <body>
-    <h1>My CV Experiences</h1>
-    <div id="experiences"></div>
+    <div id="container">
+        <!-- Content will be dynamically inserted here -->
+    </div>
     <script type="module" src="popup.js"></script>
 </body>
 </html>
