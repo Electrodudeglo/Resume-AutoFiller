@@ -17,8 +17,6 @@ function createMetaInfoSection() {
   return metaInfoDiv;
 }
 
-console.log(baseCv.meta_tag.cv_type)
-
 function createExperienceEntry(experience, index) {
     const entryDiv = document.createElement('div');
     entryDiv.className = 'experience-entry';
@@ -73,9 +71,19 @@ function addEventListeners(entryDiv, experience) {
     });
 
     insertButton.addEventListener('click', () => {
-        console.log('Insert button clicked for:', experience.company_name);
-        // Implement the actual insert functionality here
-    });
+      console.log('Insert button clicked for:', experience.company_name);
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+              action: "fillForm",
+              data: experience
+          }, function(response) {
+              if (response && response.success) {
+                  insertButton.textContent = "Filled";
+                  insertButton.classList.add("filled");
+              }
+          });
+      });
+  });
 }
 
 function displayContent() {
