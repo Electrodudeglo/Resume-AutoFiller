@@ -80,6 +80,7 @@ function addEventListeners(entryDiv, experience) {
               if (response && response.success) {
                   insertButton.textContent = "Filled";
                   insertButton.classList.add("filled");
+                  insertButton.disabled = true;
               }
           });
       });
