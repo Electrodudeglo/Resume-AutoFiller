@@ -4,7 +4,7 @@ const fieldMappings = {
     from: ['start date', 'from', 'beginning', 'start'],
     to: ['end date', 'to', 'until', 'end'],
     experience: ['description', 'responsibilities', 'duties', 'details', 'experiences', 'work experience', 'experience'],
-    location: ['location', 'place', 'city', 'country', 'address']
+    location: ['location', 'place', 'city', 'country']
 };
 
 function findAllInputs(fieldName) {
