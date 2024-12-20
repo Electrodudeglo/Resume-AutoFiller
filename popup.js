@@ -87,6 +87,17 @@ function addEventListeners(entryDiv, experience) {
   });
 }
 
+
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {action: "getGreeting"}, function(response) {
+            if (response && response.greeting) {
+                console.log(response.greeting);
+            }
+        });
+    });
+
+
+
 function displayContent() {
     const container = document.getElementById('container');
     
@@ -104,6 +115,8 @@ function displayContent() {
         const entryElement = createExperienceEntry(experience, index);
         experiencesSection.appendChild(entryElement);
     });
+
+    
 }
 
 // Call the function to display content when the popup is loaded

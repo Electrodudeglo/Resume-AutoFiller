@@ -60,11 +60,26 @@ function fillForm(experience) {
     return fieldsInserted;
 }
 
+function displayCompanyName() {
+    const companyNameInput = document.querySelector('input[name="company_name"]');
+
+    if (companyNameInput && companyNameInput.value) {
+        console.log('Company Name:', companyNameInput.value);
+    } else {
+        console.log('No content');
+    }
+}
+
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action === "fillForm") {
             const success = fillForm(request.data);
             sendResponse({success: success});
+        } else if (request.action === "getGreeting") {
+            sendResponse({greeting: displayCompanyName()});
         }
     }
 );
+
+
+
