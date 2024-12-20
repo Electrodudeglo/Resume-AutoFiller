@@ -1,44 +1,20 @@
 import { baseCv } from './mycv.js';
 
-let filledExperiences = [];
-
-function updateButtonStatus(response) {
-    if (response && response.filledExperiences) {
-        filledExperiences = response.filledExperiences;
-    }
-    document.querySelectorAll('.insert-button').forEach((button, index) => {
-        const experience = baseCv.cv_entries[index];
-        if (filledExperiences.includes(experience.company_name)) {
-            button.textContent = "Filled";
-            button.classList.add("filled");
-            button.disabled = true;
-        } else {
-            button.textContent = "Insert";
-            button.classList.remove("filled");
-            button.disabled = false;
-        }
-    });
-}
-
 function createMetaInfoSection() {
-    const metaInfoDiv = document.createElement('div');
-    metaInfoDiv.className = 'meta-info';
-    metaInfoDiv.innerHTML = `
-        <h2 class="meta-info-header">Personal Information</h2>
-        <div class="info-item">
-            <div class="info-label">Name:</div>
-            <div class="info-value">${baseCv.name}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">Email:</div>
-            <div class="info-value">${baseCv.email}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label">Phone:</div>
-            <div class="info-value">${baseCv.phone}</div>
-        </div>
-    `;
-    return metaInfoDiv;
+  const metaInfoDiv = document.createElement('div');
+  metaInfoDiv.className = 'meta-info';
+  metaInfoDiv.innerHTML = `
+      <h2 class="meta-info-header">Meta Information</h2>
+      <div class="info-item">
+          <div class="info-label">CV Type:</div>
+          <div class="info-value">${baseCv.meta_tag.cv_type}</div>
+      </div>
+      <div class="info-item">
+          <div class="info-label">AI Explanation:</div>
+          <div class="info-value">${baseCv.meta_tag.ai_explanation}</div>
+      </div>
+  `;
+  return metaInfoDiv;
 }
 
 function createExperienceEntry(experience, index) {
@@ -95,24 +71,20 @@ function addEventListeners(entryDiv, experience) {
     });
 
     insertButton.addEventListener('click', () => {
-        console.log('Insert button clicked for:', experience.company_name);
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: "fillForm",
-                data: experience
-            }, function(response) {
-                if (response && response.success) {
-                    insertButton.textContent = "Filled";
-                    insertButton.classList.add("filled");
-                    insertButton.disabled = true;
-                    filledExperiences.push(experience.company_name);
-                    updateButtonStatus({ filledExperiences: filledExperiences });
-                } else if (response && response.message) {
-                    console.log(response.message);
-                }
-            });
-        });
-    });
+      console.log('Insert button clicked for:', experience.company_name);
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+              action: "fillForm",
+              data: experience
+          }, function(response) {
+              if (response && response.success) {
+                  insertButton.textContent = "Filled";
+                  insertButton.classList.add("filled");
+                  insertButton.disabled = true;
+              }
+          });
+      });
+  });
 }
 
 function displayContent() {
@@ -132,26 +104,7 @@ function displayContent() {
         const entryElement = createExperienceEntry(experience, index);
         experiencesSection.appendChild(entryElement);
     });
-
-    // Check filled status
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {action: "getGreeting"}, function(response) {
-            if (chrome.runtime.lastError) {
-                console.log("Error: ", chrome.runtime.lastError.message);
-            } else if (response && response.greeting) {
-                console.log(response.greeting);
-                updateButtonStatus(response);
-            }
-        });
-    });
 }
 
 // Call the function to display content when the popup is loaded
 document.addEventListener('DOMContentLoaded', displayContent);
-
-// Listen for messages from the content script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "updateFilledStatus") {
-        updateButtonStatus(message);
-    }
-});

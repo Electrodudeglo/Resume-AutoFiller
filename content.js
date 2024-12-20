@@ -7,18 +7,26 @@ const fieldMappings = {
     location: ['location', 'place', 'city', 'country']
 };
 
-let filledExperiences = [];
+function convertNowToDate(experience) {
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    return {
+        ...experience,
+        to: experience.to === 'now' ? today : experience.to
+    };
+}
 
 function findAllInputs(fieldName) {
     const possibleNames = fieldMappings[fieldName] || [fieldName];
     let inputs = [];
     
     for (const name of possibleNames) {
+        // Look for input fields and textareas
         inputs = inputs.concat(Array.from(document.querySelectorAll(
             `input[name*="${name}" i], input[id*="${name}" i], 
             textarea[name*="${name}" i], textarea[id*="${name}" i]`
         )));
         
+        // Look for labels and their associated inputs
         document.querySelectorAll('label').forEach(label => {
             if (label.textContent.toLowerCase().includes(name.toLowerCase())) {
                 const input = document.getElementById(label.htmlFor) ||
@@ -42,26 +50,12 @@ function fillField(input, value) {
     return false;
 }
 
-function findEmptyExperienceSection() {
-    const sections = document.querySelectorAll('form, div[class*="experience"], section[class*="experience"]');
-    for (let section of sections) {
-        const inputs = section.querySelectorAll('input, textarea');
-        if (Array.from(inputs).every(input => !input.value)) {
-            return section;
-        }
-    }
-    return null;
-}
-
 function fillForm(experience) {
-    const emptySection = findEmptyExperienceSection();
-    if (!emptySection) return false;
-
     let fieldsInserted = false;
     
     Object.keys(fieldMappings).forEach(key => {
         if (experience && experience[key]) {
-            const inputs = findAllInputs(key).filter(input => emptySection.contains(input));
+            const inputs = findAllInputs(key);
             for (let input of inputs) {
                 if (fillField(input, experience[key])) {
                     fieldsInserted = true;
@@ -71,55 +65,15 @@ function fillForm(experience) {
         }
     });
 
-    if (fieldsInserted) {
-        filledExperiences.push(experience.company_name);
-    }
-
     return fieldsInserted;
-}
-
-function checkFilledFields() {
-    let filledFields = {};
-    const sections = document.querySelectorAll('form, div[class*="experience"], section[class*="experience"]');
-    
-    sections.forEach((section, index) => {
-        filledFields[index] = {};
-        Object.keys(fieldMappings).forEach(key => {
-            const inputs = findAllInputs(key).filter(input => section.contains(input));
-            filledFields[index][key] = inputs.some(input => input.value.trim() !== '');
-        });
-    });
-
-    const allFilled = Object.values(filledFields).every(section => 
-        Object.values(section).every(filled => filled)
-    );
-
-    chrome.runtime.sendMessage({
-        action: "updateFilledStatus",
-        allFilled: allFilled,
-        filledFields: filledFields,
-        filledExperiences: filledExperiences
-    });
-
-    return allFilled;
 }
 
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if (request.action === "fillForm") {
-            if (filledExperiences.includes(request.data.company_name)) {
-                sendResponse({success: false, message: "This experience has already been filled."});
-            } else {
-                const success = fillForm(request.data);
-                sendResponse({success: success});
-                setTimeout(checkFilledFields, 500);
-            }
-        } else if (request.action === "getGreeting") {
-            const allFilled = checkFilledFields();
-            sendResponse({greeting: allFilled ? "All fields are filled!" : "Some fields are empty."});
+            const convertedExperience = convertNowToDate(request.data);
+            const success = fillForm(convertedExperience);
+            sendResponse({success: success});
         }
     }
 );
-
-// Check filled fields periodically
-setInterval(checkFilledFields, 5000);
