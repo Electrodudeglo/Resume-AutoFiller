@@ -1,6 +1,12 @@
 import { baseCv } from './mycv.js';
 
-const aiGeneratedCv = chrome.storage.local.get('aiGeneratedCv')
+chrome.storage.local.get('aiGeneratedCv', function(data) {
+
+    console.log(data)
+
+})
+
+
 
 
 
