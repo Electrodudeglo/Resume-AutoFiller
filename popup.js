@@ -1,30 +1,40 @@
 import { baseCv } from './mycv.js';
 
-chrome.storage.local.get('aiGeneratedCv', function(data) {
+let currentCv = baseCv;
 
-    console.log(data)
-
-})
-
-
-
-
+function loadAndDisplayCV() {
+    chrome.storage.local.get('aiGeneratedCv', function(data) {
+        if (data.aiGeneratedCv) {
+            try {
+                currentCv = JSON.parse(data.aiGeneratedCv);
+                console.log('Loaded CV from storage:', currentCv);
+            } catch (error) {
+                console.error('Error parsing stored CV:', error);
+                currentCv = baseCv;
+            }
+        } else {
+            console.log('No stored CV found, using baseCv');
+            currentCv = baseCv;
+        }
+        displayContent();
+    });
+}
 
 function createMetaInfoSection() {
-  const metaInfoDiv = document.createElement('div');
-  metaInfoDiv.className = 'meta-info';
-  metaInfoDiv.innerHTML = `
-      <h2 class="meta-info-header">Meta Information</h2>
-      <div class="info-item">
-          <div class="info-label">CV Type:</div>
-          <div class="info-value">${baseCv.meta_tag.cv_type}</div>
-      </div>
-      <div class="info-item">
-          <div class="info-label">AI Explanation:</div>
-          <div class="info-value">${baseCv.meta_tag.ai_explanation}</div>
-      </div>
-  `;
-  return metaInfoDiv;
+    const metaInfoDiv = document.createElement('div');
+    metaInfoDiv.className = 'meta-info';
+    metaInfoDiv.innerHTML = `
+        <h2 class="meta-info-header">Meta Information</h2>
+        <div class="info-item">
+            <div class="info-label">CV Type:</div>
+            <div class="info-value">${currentCv.meta_tag.cv_type}</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">AI Explanation:</div>
+            <div class="info-value">${currentCv.meta_tag.ai_explanation}</div>
+        </div>
+    `;
+    return metaInfoDiv;
 }
 
 function createExperienceEntry(experience, index) {
@@ -99,6 +109,7 @@ function addEventListeners(entryDiv, experience) {
 
 function displayContent() {
     const container = document.getElementById('container');
+    container.innerHTML = ''; // Clear existing content
     
     // Create and append meta info section
     const metaInfoSection = createMetaInfoSection();
@@ -110,11 +121,11 @@ function displayContent() {
     container.appendChild(experiencesSection);
     
     // Populate experiences
-    baseCv.cv_entries.forEach((experience, index) => {
+    currentCv.cv_entries.forEach((experience, index) => {
         const entryElement = createExperienceEntry(experience, index);
         experiencesSection.appendChild(entryElement);
     });
 }
 
 // Call the function to display content when the popup is loaded
-document.addEventListener('DOMContentLoaded', displayContent);
+document.addEventListener('DOMContentLoaded', loadAndDisplayCV);
