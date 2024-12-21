@@ -2,8 +2,6 @@ import { baseCv } from './mycv.js';
 
 const aiGeneratedCv = chrome.storage.local.get('aiGeneratedCv')
 
-console.log(baseCv)
-console.log(aiGeneratedCv)
 
 
 function createMetaInfoSection() {

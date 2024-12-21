@@ -21,6 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-chrome.storage.local.get(console.log)
+
 
 
