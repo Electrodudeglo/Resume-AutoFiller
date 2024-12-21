@@ -1,5 +1,6 @@
 import { baseCv } from './mycv.js';
 
+// const localStorage = chrome.localStorage.get('generatedAiCv')
 function createMetaInfoSection() {
   const metaInfoDiv = document.createElement('div');
   metaInfoDiv.className = 'meta-info';
